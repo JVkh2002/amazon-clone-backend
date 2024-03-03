@@ -2,14 +2,21 @@ package dio.springbootweb.controller;
 
 import dio.springbootweb.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
 public class LoginController {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    boolean emailCadastrado = true;
 
     @PostMapping("/verificarEmail")
     public String VerifyEmail(@RequestParam String email){
@@ -21,9 +28,28 @@ public class LoginController {
 
 
         if (count > 0) {
-            return "E-mail já cadastrado";
+            emailCadastrado = true;
+            return "redirect:http://localhost:3000/";
         } else {
-            return "E-mail não cadastrado";
+            emailCadastrado = false;
+            return "redirect:http://localhost:3000/login";
+        }
+
+    }
+
+    @GetMapping("/verificarEmailGet")
+    public ResponseEntity<Map<String, Object>> VerifyEmailGet(){
+
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("redirectUrl", "http://localhost:3000/login");
+
+        if (emailCadastrado) {
+            response.put("emailCadastrado", emailCadastrado);
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("emailCadastrado", emailCadastrado);
+            return ResponseEntity.ok(response);
         }
 
     }
